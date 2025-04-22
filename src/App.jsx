@@ -7,6 +7,8 @@ function App() {
 
   const handleSubmit = (data) => {
     setFormData(data);
+
+    window.location.reload();
   };
 
   return (

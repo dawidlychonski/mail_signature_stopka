@@ -8,6 +8,12 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
 }
 
+.signature-form__error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
 .signature-form__title {
   margin-bottom: 20px;
   font-size: 22px;
