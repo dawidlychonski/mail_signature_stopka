@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useSignature } from '../context/SignatureContext';
 import styles from './SignatureForm.module.css';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,6 +27,10 @@ export const signatureFormSchema = yup.object().shape({
 });
 
 function SignatureForm({ onSubmit }) {
+  const { setSignatureData } = useSignature();
+  const navigate = useNavigate();
+  const [photoPreview, setPhotoPreview] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -50,8 +56,6 @@ function SignatureForm({ onSubmit }) {
   const showLinkedin = watch('showLinkedin');
   const showPhoto = watch('showPhoto');
 
-  const [photoPreview, setPhotoPreview] = useState(null);
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -67,12 +71,10 @@ function SignatureForm({ onSubmit }) {
   };
 
   const handleFinalSubmit = (data) => {
-    const fullData = { ...data, photo: photoPreview };
-
-    onSubmit(fullData);
-
-    setPhotoPreview(null); // usuń podgląd
+    setSignatureData({ ...data, photo: photoPreview });
+    navigate('/signature');
     reset();
+    setPhotoPreview(null);
   };
 
   return (

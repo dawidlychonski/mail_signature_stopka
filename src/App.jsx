@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+// src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignatureForm from './Components/SignatureForm';
 import FooterPreview from './Components/FooterPreview';
+import { SignatureProvider } from './context/SignatureContext';
 
 function App() {
-  const [formData, setFormData] = useState(null);
-
-  const handleSubmit = (data) => {
-    setFormData(data);
-
-    window.location.reload();
-  };
-
   return (
-    <div>
-      <SignatureForm onSubmit={handleSubmit} />
-      {formData && <FooterPreview data={formData} />}
-    </div>
+    <SignatureProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<SignatureForm />} />
+          <Route path="/signature" element={<FooterPreview />} />
+        </Routes>
+      </Router>
+    </SignatureProvider>
   );
 }
 
