@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styles from './SignatureForm.module.css';
 import * as yup from 'yup';
@@ -29,6 +29,7 @@ function SignatureForm({ onSubmit }) {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors }
   } = useForm({
     defaultValues: {
@@ -46,11 +47,36 @@ function SignatureForm({ onSubmit }) {
     resolver: yupResolver(signatureFormSchema)
   });
 
-  // do obserwacji czy LinkedIn ma być pokazany
   const showLinkedin = watch('showLinkedin');
+  const showPhoto = watch('showPhoto');
+
+  const [photoPreview, setPhotoPreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhotoPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageRemove = () => {
+    setPhotoPreview(null);
+  };
+
+  const handleFinalSubmit = (data) => {
+    const fullData = { ...data, photo: photoPreview };
+
+    onSubmit(fullData);
+
+    setPhotoPreview(null); // usuń podgląd
+    reset();
+  };
 
   return (
-    <form className={styles['signature-form']} onSubmit={handleSubmit(onSubmit)}>
+    <form className={styles['signature-form']} onSubmit={handleSubmit(handleFinalSubmit)}>
       <h2 className={styles['signature-form__title']}>Email Signature Form</h2>
 
       <div className={styles['signature-form__group']}>
@@ -121,6 +147,26 @@ function SignatureForm({ onSubmit }) {
           Company LinkedIn icon
         </label>
       </div>
+
+      {showPhoto && (
+        <div className={styles['signature-form__group']}>
+          <label className={styles['signature-form__label']}>Upload custom photo:</label>
+          <input
+            className={styles['signature-form__input']}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          {photoPreview && (
+            <div className={styles['signature-form__image-preview']}>
+              <img src={photoPreview} alt="Preview" width="120" />
+              <div>
+                <button type="button" onClick={handleImageRemove}>Remove</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <button className={styles['signature-form__button']} type="submit">
         Generate Signature

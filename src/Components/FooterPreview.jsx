@@ -20,8 +20,12 @@ function FooterPreview({ data }) {
     const nameStyle = `letter-spacing: 1px; font-weight: bold; font-size: 18px; color: #04CFD1; margin: ${showPhoto ? '20px 0 0 0' : '10px 0 0 0'};`;
 
     // Sekcja zdjęcia pracownika – jeśli showPhoto = false, pomijamy cały wiersz <tr>
+    // Jeśli są problemy ze zdjęciem, to użyć tego fragmentu kodu
+    // const photoRow = showPhoto
+    //   ? `<tr><td><img src="https://thehouseofcode.com/images/team/team2.png" alt="" width="120" height="109"></td></tr>`
+    //   : '';
     const photoRow = showPhoto
-      ? `<tr><td><img src="https://thehouseofcode.com/images/team/team2.png" alt="" width="120" height="109"></td></tr>`
+      ? `<tr><td><img src="${data.photo || 'https://thehouseofcode.com/images/team/team2.png'}" alt="User Photo" style="max-height: 109px; width: auto; border-radius: 4px;" /></td></tr>`
       : '';
 
     // Sekcja linku do LinkedIna – renderowana tylko jeśli zaznaczono opcję i podano adres 

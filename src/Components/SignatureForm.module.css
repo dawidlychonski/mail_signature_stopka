@@ -8,6 +8,25 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
 }
 
+.signature-form__image-preview {
+  margin-top: 10px;
+}
+
+.signature-form__image-preview img {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.signature-form__image-preview button {
+  margin-top: 5px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
 .signature-form__error {
   color: red;
   font-size: 0.9rem;
