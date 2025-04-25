@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSignature } from '../context/SignatureContext';
 import { useNavigate } from 'react-router-dom';
+import defaultImg from '../assets/default-avatar.png'
 
 function FooterPreview({ data }) {
   const { signatureData } = useSignature();
@@ -36,7 +37,7 @@ function FooterPreview({ data }) {
   //   ? `<tr><td><img src="https://thehouseofcode.com/images/team/team2.png" alt="" width="120" height="109"></td></tr>`
   //   : '';
   const photoRow = showPhoto
-    ? `<tr><td><img src="${photo || 'https://thehouseofcode.com/images/team/team2.png'}" alt="User Photo" style="max-height: 109px; width: auto; border-radius: 4px;" /></td></tr>`
+    ? `<tr><td><img src="${photo || defaultImg}" alt="User Photo" style="max-height: 109px; width: auto; border-radius: 4px;" /></td></tr>`
     : '';
 
   // Sekcja linku do LinkedIna – renderowana tylko jeśli zaznaczono opcję i podano adres 
