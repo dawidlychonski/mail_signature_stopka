@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useSignature } from '../context/SignatureContext';
 import styles from './SignatureForm.module.css';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Cropper from 'react-easy-crop';
+import Slider from '@mui/material/Slider';
+import getCroppedImg from '../utils/cropImage';
+
 
 export const signatureFormSchema = yup.object().shape({
   name: yup.string().required('Full name is required'),
@@ -30,6 +34,10 @@ function SignatureForm({ onSubmit }) {
   const { setSignatureData } = useSignature();
   const navigate = useNavigate();
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
 
   const {
     register,
@@ -60,10 +68,27 @@ function SignatureForm({ onSubmit }) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setPhotoPreview(reader.result);
-    };
+    // TO
+    // reader.onloadend = () => {
+    //   setPhotoPreview(reader.result);
+    // };
+    // NA TO
+    reader.onloadend = () => setImageSrc(reader.result);
     reader.readAsDataURL(file);
+  };
+
+  const onCropComplete = useCallback((_, croppedPixels) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
+
+  const cropImage = async () => {
+    try {
+      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
+      setPhotoPreview(croppedImage);
+      setImageSrc(null); // hide cropper
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleImageRemove = () => {
@@ -159,11 +184,57 @@ function SignatureForm({ onSubmit }) {
             accept="image/*"
             onChange={handleImageChange}
           />
-          {photoPreview && (
+          {/* TO DODANE */}
+          {imageSrc && (
+            <>
+              <div className={styles['photo-cropper']}>
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+              </div>
+
+              <div className={styles['photo-controls']}>
+                <Slider
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(_, value) => setZoom(value)}
+                  className={styles['photo-controls__slider']}
+                />
+              </div>
+              
+              <button
+                type="button"
+                onClick={cropImage}
+                className={styles['photo-controls__button']}
+              >
+                Save
+              </button>
+            </>
+          )}
+
+          {/* TO */}
+          {/* {photoPreview && (
             <div className={styles['signature-form__image-preview']}>
               <img src={photoPreview} alt="Preview" width="120" />
               <div>
                 <button type="button" onClick={handleImageRemove}>Remove</button>
+              </div>
+            </div>
+          )} */}
+          {/* NA TO */}
+          {photoPreview && !imageSrc && (
+            <div className={styles['signature-form__image-preview']}>
+              <img src={photoPreview} alt="Preview" width="120" />
+              <div>
+                <button type="button" onClick={() => setPhotoPreview(null)}>Remove</button>
               </div>
             </div>
           )}
